@@ -28,13 +28,18 @@ def test_chatgpt_integration():
     print("🤖 Initializing State Agent with ChatGPT integration...")
     agent = StateAgent()
     
-    # Test cases
+    # Enhanced test cases for better response testing
     test_cases = [
         "I'm feeling really stressed about work",
         "I had an amazing day today!",
         "I don't know what to do anymore",
         "Everything is going wrong in my life",
-        "I'm so excited about my new project"
+        "I'm so excited about my new project",
+        "I feel lost and confused",
+        "I'm worried about my future",
+        "I'm proud of what I accomplished",
+        "I feel alone and isolated",
+        "I'm grateful for my friends"
     ]
     
     print("\n🧪 Testing ChatGPT integration with emotion analysis...\n")
@@ -47,12 +52,14 @@ def test_chatgpt_integration():
             # Process the text
             result = agent.process_text(test_text, session_id=f"test_{i}")
             
-            # Display results
+            # Display results with better formatting
             print(f"✅ Original: {result['original_text']}")
-            print(f"🔄 Rephrased: {result.get('rephrased_text', 'N/A')}")
+            print(f"🔄 Enhanced: {result.get('rephrased_text', 'N/A')}")
             print(f"😊 Emotion: {result['emotion']}")
             print(f"📊 Sentiment: {result['sentiment']} (confidence: {result['confidence']:.2f})")
-            print(f"💬 Response: {result['adaptive_response']}")
+            print(f"💬 Intelligent Response:")
+            print(f"   {result['adaptive_response']}")
+            print("=" * 60)
             print()
             
         except Exception as e:

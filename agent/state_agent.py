@@ -199,13 +199,13 @@ class StateAgent:
     
     def rephrase_with_chatgpt(self, text: str) -> str:
         """
-        Use ChatGPT 4 Mini to rephrase the user's question for better analysis.
+        Use ChatGPT 4 Mini to enhance user input for better emotion analysis.
         
         Args:
             text: Original user input
             
         Returns:
-            Rephrased text optimized for emotion analysis
+            Enhanced text optimized for emotion analysis
         """
         if not self.openai_client:
             return text  # Return original if ChatGPT not available
@@ -216,32 +216,46 @@ class StateAgent:
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert at rephrasing user input to make it clearer for emotion analysis. Rephrase the user's message to be more explicit about their emotional state while maintaining the original meaning. Keep it concise and direct."
+                        "content": """You are an expert in emotional intelligence and text analysis. Your task is to enhance user input to make their emotional state more explicit and analyzable while preserving their original meaning and intent.
+
+ENHANCEMENT GUIDELINES:
+1. **Preserve Original Meaning**: Keep the core message intact
+2. **Clarify Emotional Context**: Make implicit emotions more explicit
+3. **Maintain Authenticity**: Don't add emotions that aren't implied
+4. **Improve Clarity**: Make the emotional undertones clearer
+5. **Keep Natural**: Ensure the enhanced text sounds natural
+
+EXAMPLES:
+- "I'm tired" → "I'm feeling exhausted and drained"
+- "Work is hard" → "I'm feeling overwhelmed and stressed about work"
+- "I'm excited!" → "I'm feeling enthusiastic and excited about this opportunity"
+
+Focus on making the emotional content more analyzable while keeping it authentic."""
                     },
                     {
                         "role": "user",
-                        "content": f"Rephrase this for better emotion analysis: {text}"
+                        "content": f"Enhance this text for better emotion analysis while keeping it authentic: {text}"
                     }
                 ],
-                max_tokens=150,
-                temperature=0.3
+                max_tokens=200,
+                temperature=0.4
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            logger.error(f"Error rephrasing with ChatGPT: {e}")
+            logger.error(f"Error enhancing text with ChatGPT: {e}")
             return text  # Return original on error
     
     def generate_neutral_response_with_chatgpt(self, emotion_data: Dict[str, Any], 
                                              original_text: str) -> str:
         """
-        Use ChatGPT 4 Mini to generate neutral, supportive responses based on Comprehend analysis.
+        Use ChatGPT 4 Mini to generate intelligent, context-aware responses based on Comprehend analysis.
         
         Args:
             emotion_data: Emotion analysis results from Comprehend
             original_text: Original user input
             
         Returns:
-            Neutral, supportive response
+            Intelligent, supportive response
         """
         if not self.openai_client:
             return self.generate_adaptive_response(emotion_data)  # Fallback to original method
@@ -250,32 +264,51 @@ class StateAgent:
             emotion = emotion_data.get('emotion', 'Unknown')
             sentiment = emotion_data.get('sentiment', 'NEUTRAL')
             confidence = emotion_data.get('confidence', 0.5)
+            valence = emotion_data.get('valence', 0.0)
+            arousal = emotion_data.get('arousal', 0.0)
             
-            system_prompt = f"""You are a supportive AI assistant that provides neutral, helpful responses based on emotion analysis. 
+            # Create a more sophisticated system prompt
+            system_prompt = f"""You are an expert emotional intelligence AI assistant with deep understanding of human emotions and psychology. You provide thoughtful, empathetic, and actionable responses.
+
+EMOTION ANALYSIS:
+- Detected Emotion: {emotion}
+- Sentiment: {sentiment} (confidence: {confidence:.2f})
+- Emotional Valence: {valence:.2f} (positive/negative)
+- Emotional Arousal: {arousal:.2f} (calm/excited)
+
+RESPONSE GUIDELINES:
+1. **Acknowledge & Validate**: Recognize their emotional state with empathy
+2. **Provide Insight**: Offer gentle psychological insights about their feelings
+3. **Practical Guidance**: Suggest specific, actionable steps they can take
+4. **Emotional Support**: Offer encouragement and understanding
+5. **Professional Tone**: Maintain a warm, professional, and non-judgmental approach
+6. **Length**: 3-4 sentences for comprehensive support
+
+AVOID:
+- Medical diagnoses or therapy recommendations
+- Overly positive or dismissive responses
+- Generic advice
+- Being preachy or condescending
+
+Focus on being a supportive, intelligent companion who understands emotions deeply."""
             
-            The user's emotional state has been analyzed as: {emotion} (sentiment: {sentiment}, confidence: {confidence:.2f})
-            
-            Provide a neutral, supportive response that:
-            1. Acknowledges their emotional state without judgment
-            2. Offers helpful, neutral guidance
-            3. Maintains a professional, supportive tone
-            4. Avoids being overly positive or negative
-            5. Keeps the response concise (2-3 sentences)
-            
-            Do not diagnose or provide medical advice. Focus on emotional support and practical guidance."""
+            # Create a more detailed user prompt
+            user_prompt = f"""The user expressed: "{original_text}"
+
+Based on the emotion analysis showing {emotion} with {sentiment} sentiment, provide a thoughtful, empathetic response that acknowledges their feelings and offers meaningful support."""
             
             response = self.openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"User said: {original_text}"}
+                    {"role": "user", "content": user_prompt}
                 ],
-                max_tokens=200,
-                temperature=0.4
+                max_tokens=300,
+                temperature=0.6  # Slightly higher for more natural responses
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            logger.error(f"Error generating neutral response with ChatGPT: {e}")
+            logger.error(f"Error generating intelligent response with ChatGPT: {e}")
             return self.generate_adaptive_response(emotion_data)  # Fallback to original method
 
     def process_text(self, text: str, session_id: Optional[str] = None, 
