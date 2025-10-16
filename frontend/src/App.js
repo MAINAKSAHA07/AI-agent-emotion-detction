@@ -30,7 +30,7 @@ function App() {
     return 'session_' + Math.random().toString(36).substr(2, 9);
   };
 
-  const analyzeEmotion = async (text, context = '') => {
+  const analyzeEmotion = async (text, context = '', conversationHistory = []) => {
     if (!text.trim()) {
       setError('Please enter some text to analyze');
       return;
@@ -43,7 +43,8 @@ function App() {
       const response = await axios.post(`${API_BASE_URL}/analyze`, {
         text: text,
         session_id: currentSession,
-        context: context
+        context: context,
+        conversation_history: conversationHistory
       });
 
       const analysis = response.data.analysis;
@@ -52,6 +53,9 @@ function App() {
       
       // Refresh trends after new analysis
       await loadTrends();
+      
+      // Return the analysis for the agent to use
+      return analysis;
       
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to analyze emotion');

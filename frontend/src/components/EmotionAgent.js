@@ -5,6 +5,7 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState([]);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -44,13 +45,36 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
     setIsTyping(true);
 
     try {
-      // Call the analysis function
-      await onAnalyze(inputText, 'agent_conversation');
+      // Call the analysis function with conversation history
+      const result = await onAnalyze(inputText, 'agent_conversation', conversationHistory);
       
-      // Simulate agent processing
+      // Add the user message to conversation history
+      const newHistory = [...conversationHistory, { user: inputText }];
+      
+      // Wait for the analysis to complete and get the response
       setTimeout(() => {
-        const agentResponse = generateAgentResponse(inputText);
-        setMessages(prev => [...prev, agentResponse]);
+        if (result && result.adaptive_response) {
+          const agentResponse = {
+            id: Date.now(),
+            type: 'agent',
+            content: result.adaptive_response,
+            timestamp: new Date(),
+            emotion: result.emotion
+          };
+          setMessages(prev => [...prev, agentResponse]);
+          
+          // Add the agent response to conversation history
+          setConversationHistory([...newHistory, { assistant: result.adaptive_response }]);
+        } else {
+          const fallbackResponse = {
+            id: Date.now(),
+            type: 'agent',
+            content: "I understand what you're expressing. Let me provide some insights...",
+            timestamp: new Date(),
+            emotion: null
+          };
+          setMessages(prev => [...prev, fallbackResponse]);
+        }
         setIsTyping(false);
       }, 1500);
 
@@ -67,25 +91,6 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
     }
   };
 
-  const generateAgentResponse = (userText) => {
-    // This would normally come from the backend analysis
-    // For now, we'll generate a contextual response
-    const responses = [
-      "I can sense the emotions in your message. Let me analyze this for you...",
-      "Thank you for sharing that with me. I'm processing your emotional state...",
-      "I understand what you're expressing. Let me provide some insights...",
-      "Your words carry emotional weight. I'm analyzing the sentiment and feelings...",
-      "I can feel the emotion behind your words. Let me break this down for you..."
-    ];
-    
-    return {
-      id: Date.now(),
-      type: 'agent',
-      content: responses[Math.floor(Math.random() * responses.length)],
-      timestamp: new Date(),
-      emotion: null
-    };
-  };
 
   const formatTime = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString([], { 
@@ -117,6 +122,7 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
         emotion: null
       }
     ]);
+    setConversationHistory([]);
   };
 
   return (
