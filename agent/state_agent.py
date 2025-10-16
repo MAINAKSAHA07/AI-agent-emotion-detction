@@ -8,6 +8,9 @@ import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
 import re
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +23,24 @@ class StateAgent:
     
     def __init__(self, region_name: str = 'us-east-1'):
         """
-        Initialize the State Agent with AWS Comprehend client.
+        Initialize the State Agent with AWS Comprehend client and OpenAI client.
         
         Args:
             region_name: AWS region for Comprehend service
         """
+        load_dotenv()
+        
+        # Initialize AWS Comprehend
         self.comprehend = boto3.client('comprehend', region_name=region_name)
+        
+        # Initialize OpenAI client
+        openai_api_key = os.getenv('OPENAI_API_KEY')
+        if openai_api_key:
+            self.openai_client = OpenAI(api_key=openai_api_key)
+        else:
+            self.openai_client = None
+            logger.warning("OpenAI API key not found. ChatGPT features will be disabled.")
+        
         self.emotion_mapping = self._initialize_emotion_mapping()
         
     def _initialize_emotion_mapping(self) -> Dict[str, Dict[str, Any]]:
@@ -182,6 +197,87 @@ class StateAgent:
         
         return base_response
     
+    def rephrase_with_chatgpt(self, text: str) -> str:
+        """
+        Use ChatGPT 4 Mini to rephrase the user's question for better analysis.
+        
+        Args:
+            text: Original user input
+            
+        Returns:
+            Rephrased text optimized for emotion analysis
+        """
+        if not self.openai_client:
+            return text  # Return original if ChatGPT not available
+        
+        try:
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are an expert at rephrasing user input to make it clearer for emotion analysis. Rephrase the user's message to be more explicit about their emotional state while maintaining the original meaning. Keep it concise and direct."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Rephrase this for better emotion analysis: {text}"
+                    }
+                ],
+                max_tokens=150,
+                temperature=0.3
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error(f"Error rephrasing with ChatGPT: {e}")
+            return text  # Return original on error
+    
+    def generate_neutral_response_with_chatgpt(self, emotion_data: Dict[str, Any], 
+                                             original_text: str) -> str:
+        """
+        Use ChatGPT 4 Mini to generate neutral, supportive responses based on Comprehend analysis.
+        
+        Args:
+            emotion_data: Emotion analysis results from Comprehend
+            original_text: Original user input
+            
+        Returns:
+            Neutral, supportive response
+        """
+        if not self.openai_client:
+            return self.generate_adaptive_response(emotion_data)  # Fallback to original method
+        
+        try:
+            emotion = emotion_data.get('emotion', 'Unknown')
+            sentiment = emotion_data.get('sentiment', 'NEUTRAL')
+            confidence = emotion_data.get('confidence', 0.5)
+            
+            system_prompt = f"""You are a supportive AI assistant that provides neutral, helpful responses based on emotion analysis. 
+            
+            The user's emotional state has been analyzed as: {emotion} (sentiment: {sentiment}, confidence: {confidence:.2f})
+            
+            Provide a neutral, supportive response that:
+            1. Acknowledges their emotional state without judgment
+            2. Offers helpful, neutral guidance
+            3. Maintains a professional, supportive tone
+            4. Avoids being overly positive or negative
+            5. Keeps the response concise (2-3 sentences)
+            
+            Do not diagnose or provide medical advice. Focus on emotional support and practical guidance."""
+            
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"User said: {original_text}"}
+                ],
+                max_tokens=200,
+                temperature=0.4
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error(f"Error generating neutral response with ChatGPT: {e}")
+            return self.generate_adaptive_response(emotion_data)  # Fallback to original method
+
     def process_text(self, text: str, session_id: Optional[str] = None, 
                     context: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -203,23 +299,27 @@ class StateAgent:
                 'timestamp': datetime.utcnow().isoformat()
             }
         
-        # Detect language
-        language = self.detect_language(cleaned_text)
+        # Rephrase with ChatGPT for better analysis
+        rephrased_text = self.rephrase_with_chatgpt(cleaned_text)
         
-        # Analyze sentiment
-        sentiment_result = self.analyze_sentiment(cleaned_text, language or 'en')
+        # Detect language
+        language = self.detect_language(rephrased_text)
+        
+        # Analyze sentiment using rephrased text
+        sentiment_result = self.analyze_sentiment(rephrased_text, language or 'en')
         sentiment = sentiment_result['Sentiment']
         scores = sentiment_result['SentimentScore']
         
         # Map to emotion
         emotion_data = self.map_sentiment_to_emotion(sentiment, scores)
         
-        # Generate adaptive response
-        response = self.generate_adaptive_response(emotion_data, context)
+        # Generate neutral response with ChatGPT
+        response = self.generate_neutral_response_with_chatgpt(emotion_data, text)
         
         # Compile results
         result = {
             'input_text': cleaned_text,
+            'rephrased_text': rephrased_text,
             'original_text': text,
             'language': language,
             'sentiment': sentiment,
