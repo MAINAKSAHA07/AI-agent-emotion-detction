@@ -5,7 +5,7 @@ Handles text analysis, emotion mapping, and intelligent responses
 
 import boto3
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime
 import re
 import os
@@ -247,17 +247,19 @@ Focus on making the emotional content more analyzable while keeping it authentic
             logger.error(f"Error enhancing text with ChatGPT: {e}")
             return text  # Return original on error
     
-    def generate_neutral_response_with_chatgpt(self, emotion_data: Dict[str, Any], 
-                                             original_text: str) -> str:
+    def generate_conversational_response_with_chatgpt(self, emotion_data: Dict[str, Any], 
+                                                     original_text: str, 
+                                                     conversation_history: Optional[List[Dict]] = None) -> str:
         """
-        Use ChatGPT 4 Mini to generate intelligent, context-aware responses based on Comprehend analysis.
+        Use ChatGPT to generate conversational responses that handle general questions while maintaining emotional awareness.
         
         Args:
             emotion_data: Emotion analysis results from Comprehend
             original_text: Original user input
+            conversation_history: Previous conversation context
             
         Returns:
-            Intelligent, supportive response
+            Intelligent, conversational response
         """
         if not self.openai_client:
             return self.generate_adaptive_response(emotion_data)  # Fallback to original method
@@ -269,8 +271,8 @@ Focus on making the emotional content more analyzable while keeping it authentic
             valence = emotion_data.get('valence', 0.0)
             arousal = emotion_data.get('arousal', 0.0)
             
-            # Create a more sophisticated system prompt
-            system_prompt = f"""You are an expert emotional intelligence AI assistant with deep understanding of human emotions and psychology. You provide thoughtful, empathetic, and actionable responses.
+            # Create a conversational system prompt that handles general questions while maintaining emotional awareness
+            system_prompt = f"""You are an intelligent, empathetic AI assistant who can handle both general conversations and emotional support. You understand the user's emotional state and respond accordingly.
 
 EMOTION ANALYSIS:
 - Detected Emotion: {emotion}
@@ -278,26 +280,39 @@ EMOTION ANALYSIS:
 - Emotional Valence: {valence:.2f} (positive/negative)
 - Emotional Arousal: {arousal:.2f} (calm/excited)
 
-RESPONSE GUIDELINES:
-1. **Acknowledge & Validate**: Recognize their emotional state with empathy
-2. **Provide Insight**: Offer gentle psychological insights about their feelings
-3. **Practical Guidance**: Suggest specific, actionable steps they can take
-4. **Emotional Support**: Offer encouragement and understanding
-5. **Professional Tone**: Maintain a warm, professional, and non-judgmental approach
-6. **Length**: 3-4 sentences for comprehensive support
+CONVERSATION GUIDELINES:
+1. **Handle General Questions**: Answer questions about weather, news, facts, etc. naturally
+2. **Maintain Emotional Awareness**: Always consider their emotional state in your response
+3. **Be Conversational**: Respond like a caring friend who's also knowledgeable
+4. **Context Awareness**: Use conversation history to provide relevant responses
+5. **Emotional Support**: When appropriate, acknowledge their emotional state
+6. **Natural Flow**: Keep responses conversational and engaging
+
+RESPONSE STYLE:
+- For general questions: Answer directly while being emotionally aware
+- For emotional content: Provide support and understanding
+- For mixed content: Address both the question and emotional undertones
+- Always maintain a warm, helpful, and intelligent tone
 
 AVOID:
-- Medical diagnoses or therapy recommendations
-- Overly positive or dismissive responses
-- Generic advice
-- Being preachy or condescending
-
-Focus on being a supportive, intelligent companion who understands emotions deeply."""
+- Being overly clinical or robotic
+- Ignoring emotional context
+- Giving medical advice
+- Being dismissive of their feelings"""
             
-            # Create a more detailed user prompt
-            user_prompt = f"""The user expressed: "{original_text}"
-
-Based on the emotion analysis showing {emotion} with {sentiment} sentiment, provide a thoughtful, empathetic response that acknowledges their feelings and offers meaningful support."""
+            # Create a conversational user prompt
+            history_context = ""
+            if conversation_history:
+                recent_history = conversation_history[-3:]  # Last 3 exchanges
+                history_context = f"\n\nRecent conversation context:\n"
+                for exchange in recent_history:
+                    history_context += f"User: {exchange.get('user', '')}\nAssistant: {exchange.get('assistant', '')}\n"
+            
+            user_prompt = f"""User's message: "{original_text}"
+            
+Their emotional state shows {emotion} with {sentiment} sentiment (confidence: {confidence:.2f}).
+{history_context}
+Respond naturally to their message while being aware of their emotional state. If it's a general question, answer it directly. If it's emotional, provide support. If it's mixed, address both aspects naturally."""
             
             response = self.openai_client.ChatCompletion.create(
                 model="gpt-3.5-turbo",
@@ -313,8 +328,8 @@ Based on the emotion analysis showing {emotion} with {sentiment} sentiment, prov
             logger.error(f"Error generating intelligent response with ChatGPT: {e}")
             return self.generate_adaptive_response(emotion_data)  # Fallback to original method
 
-    def process_text(self, text: str, session_id: Optional[str] = None, 
-                    context: Optional[str] = None) -> Dict[str, Any]:
+    def process_text(self, text: str, session_id: Optional[str] = None,
+                    context: Optional[str] = None, conversation_history: Optional[List[Dict]] = None) -> Dict[str, Any]:
         """
         Main processing method that handles the complete emotion detection pipeline.
         
@@ -348,8 +363,8 @@ Based on the emotion analysis showing {emotion} with {sentiment} sentiment, prov
         # Map to emotion
         emotion_data = self.map_sentiment_to_emotion(sentiment, scores)
         
-        # Generate neutral response with ChatGPT
-        response = self.generate_neutral_response_with_chatgpt(emotion_data, text)
+        # Generate conversational response with ChatGPT
+        response = self.generate_conversational_response_with_chatgpt(emotion_data, text, conversation_history)
         
         # Compile results
         result = {

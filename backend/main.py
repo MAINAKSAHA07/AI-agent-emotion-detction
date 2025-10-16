@@ -76,12 +76,14 @@ async def analyze_emotion(request: Request):
     - text: string (required) - Text to analyze
     - session_id: string (optional) - Session identifier
     - context: string (optional) - Additional context for analysis
+    - conversation_history: array (optional) - Previous conversation context
     """
     try:
         data = await request.json()
         text = data.get("text", "").strip()
         session_id = data.get("session_id")
         context = data.get("context")
+        conversation_history = data.get("conversation_history", [])
         
         if not text:
             raise HTTPException(status_code=400, detail="Text input is required")
@@ -90,8 +92,8 @@ async def analyze_emotion(request: Request):
         if not session_id:
             session_id = str(uuid.uuid4())
         
-        # Process text through State Agent
-        result = state_agent.process_text(text, session_id, context)
+        # Process text through State Agent with conversation history
+        result = state_agent.process_text(text, session_id, context, conversation_history)
         
         if "error" in result:
             raise HTTPException(status_code=400, detail=result["error"])
