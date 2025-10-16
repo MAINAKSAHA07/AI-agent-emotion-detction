@@ -9,7 +9,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 import os
-from openai import OpenAI
+import openai
 from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
