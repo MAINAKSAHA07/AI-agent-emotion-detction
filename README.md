@@ -1,10 +1,10 @@
 # 🌐 Emotion Detection Web App
 
-A professional web application that uses **Amazon Comprehend** to detect emotions from user input and runs through an **intelligent agent layer** for adaptive responses.
+A professional web application that uses **advanced AI technology** to detect emotions from user input and runs through an **intelligent agent layer** for adaptive responses.
 
 ## 🎯 Features
 
-- **Real-time Emotion Detection**: Analyze text sentiment and emotions using Amazon Comprehend
+- **Real-time Emotion Detection**: Analyze text sentiment and emotions using advanced AI technology
 - **Intelligent Agent Layer**: AI agent that maps sentiments to emotions and provides adaptive responses
 - **Session Management**: Track emotional trends and history per user session
 - **Responsive Dashboard**: Modern React frontend with real-time updates
@@ -15,7 +15,7 @@ A professional web application that uses **Amazon Comprehend** to detect emotion
 
 ### ✅ What's Working:
 - **Frontend**: Deployed to EC2 nginx root (`/var/www/html/`)
-- **Backend**: Running on EC2 with Amazon Comprehend integration
+- **Backend**: Running on EC2 with advanced AI integration
 - **Database**: PostgreSQL configured and running
 - **API**: Working locally on EC2 (tested successfully)
 - **Emotion Analysis**: Working with 99.78% confidence

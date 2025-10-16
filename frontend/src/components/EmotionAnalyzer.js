@@ -91,7 +91,7 @@ const EmotionAnalyzer = ({ onAnalyze, loading, error }) => {
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <h3 className="text-sm font-medium text-gray-700 mb-2">How it works:</h3>
         <ul className="text-xs text-gray-600 space-y-1">
-          <li>• Your text is analyzed using Amazon Comprehend</li>
+          <li>• Your text is analyzed using advanced AI technology</li>
           <li>• An AI agent interprets the sentiment and maps it to emotions</li>
           <li>• You receive personalized insights and adaptive responses</li>
         </ul>

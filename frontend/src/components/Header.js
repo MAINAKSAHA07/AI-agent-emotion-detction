@@ -15,7 +15,7 @@ const Header = ({ sessionId, onClearSession, viewMode, onViewModeChange }) => {
                 Emotion Detection
               </h1>
               <p className="text-sm text-gray-600">
-                Powered by Amazon Comprehend & AI Agent
+                Intelligent AI Agent for Emotional Analysis
               </p>
             </div>
           </div>

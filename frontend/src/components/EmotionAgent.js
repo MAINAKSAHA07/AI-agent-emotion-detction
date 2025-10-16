@@ -130,7 +130,7 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
             </div>
             <div>
               <h3 className="font-semibold">Emotion Intelligence Agent</h3>
-              <p className="text-sm text-white/80">Powered by Amazon Comprehend</p>
+              <p className="text-sm text-white/80">Powered by Advanced AI</p>
             </div>
           </div>
           <button
