@@ -36,7 +36,9 @@ class StateAgent:
         # Initialize OpenAI client
         openai_api_key = os.getenv('chatgptapi')
         if openai_api_key:
-            self.openai_client = OpenAI(api_key=openai_api_key)
+            import openai
+            openai.api_key = openai_api_key
+            self.openai_client = openai
         else:
             self.openai_client = None
             logger.warning("ChatGPT API key not found. ChatGPT features will be disabled.")
@@ -211,8 +213,8 @@ class StateAgent:
             return text  # Return original if ChatGPT not available
         
         try:
-            response = self.openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+            response = self.openai_client.ChatCompletion.create(
+                model="gpt-3.5-turbo",
                 messages=[
                     {
                         "role": "system",
@@ -297,8 +299,8 @@ Focus on being a supportive, intelligent companion who understands emotions deep
 
 Based on the emotion analysis showing {emotion} with {sentiment} sentiment, provide a thoughtful, empathetic response that acknowledges their feelings and offers meaningful support."""
             
-            response = self.openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+            response = self.openai_client.ChatCompletion.create(
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
