@@ -34,12 +34,12 @@ class StateAgent:
         self.comprehend = boto3.client('comprehend', region_name=region_name)
         
         # Initialize OpenAI client
-        openai_api_key = os.getenv('OPENAI_API_KEY')
+        openai_api_key = os.getenv('chatgptapi')
         if openai_api_key:
             self.openai_client = OpenAI(api_key=openai_api_key)
         else:
             self.openai_client = None
-            logger.warning("OpenAI API key not found. ChatGPT features will be disabled.")
+            logger.warning("ChatGPT API key not found. ChatGPT features will be disabled.")
         
         self.emotion_mapping = self._initialize_emotion_mapping()
         

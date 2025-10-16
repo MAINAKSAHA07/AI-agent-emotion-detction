@@ -18,10 +18,10 @@ def test_chatgpt_integration():
     # Load environment variables
     load_dotenv()
     
-    # Check if OpenAI API key is available
-    if not os.getenv('OPENAI_API_KEY'):
-        print("❌ OPENAI_API_KEY not found in environment variables")
-        print("Please add your OpenAI API key to the .env file")
+    # Check if ChatGPT API key is available
+    if not os.getenv('chatgptapi'):
+        print("❌ chatgptapi not found in environment variables")
+        print("Please add your ChatGPT API key to the .env file")
         return False
     
     # Initialize the State Agent
