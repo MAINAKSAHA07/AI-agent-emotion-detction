@@ -4,8 +4,27 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  REACT_APP_API_URL = "/api"
 
+# API proxy to avoid mixed content issues (must come before catch-all)
+[[redirects]]
+  from = "/api/*"
+  to = "http://3.144.160.219:8000/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
+
+# Catch-all for React Router
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Headers for CORS and security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

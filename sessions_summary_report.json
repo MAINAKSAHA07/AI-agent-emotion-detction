@@ -1,0 +1,273 @@
+{
+  "export_info": {
+    "export_timestamp": "2025-10-17T19:30:00Z",
+    "total_sessions": 15,
+    "export_date": "2025-10-17 12:22:17",
+    "total_analyses": 19
+  },
+  "session_summary": [
+    {
+      "session_id": "session_yemkfemlg",
+      "created_at": "2025-10-17T19:18:14.672505",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.8,
+          "arousal": 0.7,
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "session_id": "session_u5yynm609",
+      "created_at": "2025-10-17T19:16:22.026711",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference / Contemplative",
+          "valence": 0.0,
+          "arousal": 0.14,
+          "confidence": 0.69
+        }
+      ]
+    },
+    {
+      "session_id": "session_qsnp6c6dk",
+      "created_at": "2025-10-17T17:18:42.346403",
+      "total_analyses": 2,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.75,
+          "arousal": 0.65,
+          "confidence": 0.93
+        },
+        {
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "valence": 0.75,
+          "arousal": 0.56,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "session_id": "test_calm",
+      "created_at": "2025-10-17T17:17:24.678290",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "valence": 0.8,
+          "arousal": 0.6,
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "session_id": "test_bored",
+      "created_at": "2025-10-17T17:17:18.798149",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.79,
+          "arousal": 0.7,
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "session_id": "test_stressed",
+      "created_at": "2025-10-17T17:17:12.326143",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.77,
+          "arousal": 0.67,
+          "confidence": 0.96
+        }
+      ]
+    },
+    {
+      "session_id": "test_excited",
+      "created_at": "2025-10-17T17:17:05.855098",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "valence": 0.8,
+          "arousal": 0.6,
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "session_id": "session_0zobsmqpe",
+      "created_at": "2025-10-17T16:46:25.361450",
+      "total_analyses": 2,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.73,
+          "arousal": 0.64,
+          "confidence": 0.91
+        },
+        {
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "valence": 0.79,
+          "arousal": 0.59,
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "session_id": "session_cfl1n44gt",
+      "created_at": "2025-10-17T16:43:56.343330",
+      "total_analyses": 3,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.8,
+          "arousal": 0.7,
+          "confidence": 1.0
+        },
+        {
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference / Contemplative",
+          "valence": 0.0,
+          "arousal": 0.2,
+          "confidence": 0.98
+        },
+        {
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "valence": 0.77,
+          "arousal": 0.58,
+          "confidence": 0.96
+        }
+      ]
+    },
+    {
+      "session_id": "test_sad2",
+      "created_at": "2025-10-17T16:43:17.711267",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.79,
+          "arousal": 0.69,
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "session_id": "test_angry2",
+      "created_at": "2025-10-17T16:43:10.361625",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "valence": -0.79,
+          "arousal": 0.69,
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "session_id": "test_happy2",
+      "created_at": "2025-10-17T16:43:00.678082",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "valence": 0.8,
+          "arousal": 0.6,
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "session_id": "test_happy",
+      "created_at": "2025-10-17T16:42:46.668496",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference",
+          "valence": 0.0,
+          "arousal": 0.1,
+          "confidence": 0.5
+        }
+      ]
+    },
+    {
+      "session_id": "test_angry",
+      "created_at": "2025-10-17T16:42:28.277851",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference",
+          "valence": 0.0,
+          "arousal": 0.1,
+          "confidence": 0.5
+        }
+      ]
+    },
+    {
+      "session_id": "test_sad",
+      "created_at": "2025-10-17T16:42:11.075197",
+      "total_analyses": 1,
+      "analyses": [
+        {
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference",
+          "valence": 0.0,
+          "arousal": 0.1,
+          "confidence": 0.5
+        }
+      ]
+    }
+  ],
+  "emotional_analysis_summary": {
+    "sentiment_distribution": {
+      "NEGATIVE": 8,
+      "NEUTRAL": 5,
+      "POSITIVE": 6
+    },
+    "emotion_distribution": {
+      "Sadness / Anger / Fear / Frustration": 8,
+      "Calm / Indifference / Contemplative": 2,
+      "Joy / Optimism / Excitement": 6,
+      "Calm / Indifference": 3
+    },
+    "valence_range": {
+      "min": -0.8,
+      "max": 0.8
+    },
+    "arousal_range": {
+      "min": 0.1,
+      "max": 0.7
+    },
+    "confidence_range": {
+      "min": 0.5,
+      "max": 1.0
+    }
+  }
+}

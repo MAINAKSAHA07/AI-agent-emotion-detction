@@ -54,28 +54,36 @@ class StateAgent:
         """
         return {
             "POSITIVE": {
-                "emotion": "Joy / Optimism",
+                "emotion": "Joy / Optimism / Excitement",
                 "valence": 0.8,
                 "arousal": 0.6,
-                "response_template": "That's wonderful! What made you feel so positive about this?"
+                "response_template": "That sounds great! I'd love to hear more about what's going well for you.",
+                "emotional_indicators": ["happy", "excited", "optimistic", "enthusiastic", "grateful"],
+                "response_style": "enthusiastic and celebratory"
             },
             "NEGATIVE": {
-                "emotion": "Sadness / Anger / Fear",
+                "emotion": "Sadness / Anger / Fear / Frustration",
                 "valence": -0.8,
                 "arousal": 0.7,
-                "response_template": "I'm sorry to hear that. Would you like to talk about what's troubling you?"
+                "response_template": "I can hear that this is really difficult for you. I'm here to listen and help however I can.",
+                "emotional_indicators": ["sad", "angry", "frustrated", "worried", "disappointed"],
+                "response_style": "empathetic and supportive"
             },
             "NEUTRAL": {
-                "emotion": "Calm / Indifference",
+                "emotion": "Calm / Indifference / Contemplative",
                 "valence": 0.0,
                 "arousal": 0.2,
-                "response_template": "It sounds like you're in a balanced state. How are you feeling overall?"
+                "response_template": "I appreciate you sharing that with me. How can I help you today?",
+                "emotional_indicators": ["calm", "neutral", "thoughtful", "balanced", "content"],
+                "response_style": "gentle and exploratory"
             },
             "MIXED": {
-                "emotion": "Conflicted / Uncertain",
+                "emotion": "Conflicted / Uncertain / Ambivalent",
                 "valence": 0.2,
                 "arousal": 0.5,
-                "response_template": "You seem to have mixed feelings about this. Can you tell me more about what's on your mind?"
+                "response_template": "It sounds like you're working through some complex thoughts. I'm here to help you sort through things.",
+                "emotional_indicators": ["conflicted", "uncertain", "torn", "ambivalent", "confused"],
+                "response_style": "patient and understanding"
             }
         }
     
@@ -176,6 +184,100 @@ class StateAgent:
             'response_template': emotion_data['response_template']
         }
     
+    def _calculate_emotional_intensity(self, emotion_data: Dict[str, Any]) -> str:
+        """
+        Calculate emotional intensity based on Comprehend analysis.
+        
+        Args:
+            emotion_data: Emotion analysis results
+            
+        Returns:
+            String describing emotional intensity
+        """
+        confidence = emotion_data.get('confidence', 0.5)
+        valence = abs(emotion_data.get('valence', 0.0))
+        arousal = emotion_data.get('arousal', 0.0)
+        
+        # Calculate intensity based on confidence, valence magnitude, and arousal
+        intensity_score = (confidence * 0.4) + (valence * 0.3) + (arousal * 0.3)
+        
+        if intensity_score > 0.7:
+            return "Very High"
+        elif intensity_score > 0.5:
+            return "High"
+        elif intensity_score > 0.3:
+            return "Moderate"
+        else:
+            return "Low"
+    
+    def _determine_response_strategy(self, emotion_data: Dict[str, Any]) -> str:
+        """
+        Determine the appropriate response strategy based on valence and arousal ranges.
+        
+        Ground Rules:
+        - Valence: -1 to 1 (0 is midpoint)
+        - Arousal: 0 to 1 (0.5 is midpoint)
+        
+        Args:
+            emotion_data: Emotion analysis results
+            
+        Returns:
+            String describing response strategy
+        """
+        valence = emotion_data.get('valence', 0.0)
+        arousal = emotion_data.get('arousal', 0.0)
+        
+        # Rule 1: Valence 0 to 1, Arousal 0.5 to 1 - EXCITED & SEEKING DETAILED ANSWERS
+        if 0 <= valence <= 1 and 0.5 <= arousal <= 1:
+            return "EXCITED_DETAILED_SEARCH"
+        
+        # Rule 2: Valence 0 to -1, Arousal 0.5 to 1 - STRESSED & NEEDS URGENT CLEAR ANSWERS
+        elif -1 <= valence <= 0 and 0.5 <= arousal <= 1:
+            return "STRESSED_URGENT_CLEAR"
+        
+        # Rule 3: Valence 0 to -1, Arousal 0 to 0.5 - BORED & NEEDS SIMPLE CLEAR ANSWERS
+        elif -1 <= valence <= 0 and 0 <= arousal <= 0.5:
+            return "BORED_SIMPLE_CLEAR"
+        
+        # Rule 4: Valence 0 to 1, Arousal 0 to 0.5 - CALM & NEEDS ENGAGING TWO-WAY CONVERSATION
+        elif 0 <= valence <= 1 and 0 <= arousal <= 0.5:
+            return "CALM_ENGAGING_CONVERSATION"
+        
+        # Fallback for edge cases
+        else:
+            return "ADAPTIVE_CONTEXTUAL"
+    
+    def _calculate_response_temperature(self, emotion_data: Dict[str, Any]) -> float:
+        """
+        Calculate appropriate temperature for ChatGPT based on emotional state.
+        
+        Args:
+            emotion_data: Emotion analysis results
+            
+        Returns:
+            Temperature value (0.0 to 1.0)
+        """
+        arousal = emotion_data.get('arousal', 0.0)
+        valence = emotion_data.get('valence', 0.0)
+        confidence = emotion_data.get('confidence', 0.5)
+        
+        # Base temperature
+        base_temp = 0.6
+        
+        # Adjust based on arousal (higher arousal = more creative/energetic)
+        arousal_adjustment = arousal * 0.2
+        
+        # Adjust based on valence (extreme emotions = more creative)
+        valence_adjustment = abs(valence) * 0.1
+        
+        # Adjust based on confidence (higher confidence = more focused)
+        confidence_adjustment = (1 - confidence) * 0.1
+        
+        temperature = base_temp + arousal_adjustment + valence_adjustment + confidence_adjustment
+        
+        # Clamp between 0.3 and 0.9
+        return max(0.3, min(0.9, temperature))
+
     def generate_adaptive_response(self, emotion_data: Dict[str, Any], 
                                  context: Optional[str] = None) -> str:
         """
@@ -190,12 +292,12 @@ class StateAgent:
         """
         base_response = emotion_data.get('response_template', 'Thank you for sharing.')
         
-        # Add context-aware modifications
+        # Add context-aware modifications without explicit mood mentions
         if context:
             if emotion_data['valence'] > 0.5:
-                base_response += f" I can see you're feeling positive about {context}."
+                base_response += f" I can see {context} is important to you."
             elif emotion_data['valence'] < -0.5:
-                base_response += f" It sounds like {context} is really affecting you."
+                base_response += f" It sounds like {context} is really challenging for you."
         
         return base_response
     
@@ -214,7 +316,7 @@ class StateAgent:
         
         try:
             response = self.openai_client.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4.1-nano",
                 messages=[
                     {
                         "role": "system",
@@ -251,7 +353,7 @@ Focus on making the emotional content more analyzable while keeping it authentic
                                                      original_text: str, 
                                                      conversation_history: Optional[List[Dict]] = None) -> str:
         """
-        Use ChatGPT to generate conversational responses that handle general questions while maintaining emotional awareness.
+        Use ChatGPT to generate conversational responses that are heavily dependent on Comprehend emotional analysis.
         
         Args:
             emotion_data: Emotion analysis results from Comprehend
@@ -259,7 +361,7 @@ Focus on making the emotional content more analyzable while keeping it authentic
             conversation_history: Previous conversation context
             
         Returns:
-            Intelligent, conversational response
+            Emotionally-aware conversational response
         """
         if not self.openai_client:
             return self.generate_adaptive_response(emotion_data)  # Fallback to original method
@@ -270,37 +372,82 @@ Focus on making the emotional content more analyzable while keeping it authentic
             confidence = emotion_data.get('confidence', 0.5)
             valence = emotion_data.get('valence', 0.0)
             arousal = emotion_data.get('arousal', 0.0)
+            sentiment_scores = emotion_data.get('sentiment_scores', {})
             
-            # Create a conversational system prompt that handles general questions while maintaining emotional awareness
-            system_prompt = f"""You are an intelligent, empathetic AI assistant who can handle both general conversations and emotional support. You understand the user's emotional state and respond accordingly.
+            # Determine emotional intensity and response strategy
+            emotional_intensity = self._calculate_emotional_intensity(emotion_data)
+            response_strategy = self._determine_response_strategy(emotion_data)
+            
+            # Create fine-tuned system prompt based on valence and arousal ranges
+            system_prompt = f"""You are an emotionally intelligent AI assistant whose responses are PRIMARILY driven by the user's emotional state detected by Amazon Comprehend. Your response style, tone, and content must adapt based on their emotional analysis.
 
-EMOTION ANALYSIS:
-- Detected Emotion: {emotion}
+CURRENT EMOTIONAL ANALYSIS (CRITICAL - USE THIS TO SHAPE YOUR RESPONSE):
 - Sentiment: {sentiment} (confidence: {confidence:.2f})
-- Emotional Valence: {valence:.2f} (positive/negative)
-- Emotional Arousal: {arousal:.2f} (calm/excited)
+- Emotional Valence: {valence:.2f} (positive/negative intensity)
+- Emotional Arousal: {arousal:.2f} (calm/excited intensity)
+- Emotional Intensity: {emotional_intensity}
+- Response Strategy: {response_strategy}
 
-CONVERSATION GUIDELINES:
-1. **Handle General Questions**: Answer questions about weather, news, facts, etc. naturally
-2. **Maintain Emotional Awareness**: Always consider their emotional state in your response
-3. **Be Conversational**: Respond like a caring friend who's also knowledgeable
-4. **Context Awareness**: Use conversation history to provide relevant responses
-5. **Emotional Support**: When appropriate, acknowledge their emotional state
-6. **Natural Flow**: Keep responses conversational and engaging
+SENTIMENT BREAKDOWN:
+- Positive: {sentiment_scores.get('Positive', 0):.2f}
+- Negative: {sentiment_scores.get('Negative', 0):.2f}
+- Neutral: {sentiment_scores.get('Neutral', 0):.2f}
+- Mixed: {sentiment_scores.get('Mixed', 0):.2f}
 
-RESPONSE STYLE:
-- For general questions: Answer directly while being emotionally aware
-- For emotional content: Provide support and understanding
-- For mixed content: Address both the question and emotional undertones
-- Always maintain a warm, helpful, and intelligent tone
+FINE-TUNED RESPONSE STRATEGIES BASED ON VALENCE AND AROUSAL:
+
+**STRATEGY: {response_strategy}**
+
+1. **EXCITED_DETAILED_SEARCH** (Valence: 0 to 1, Arousal: 0.5 to 1):
+   - User is seeking DETAILED, COMPREHENSIVE answers
+   - Provide thorough, well-researched responses with supporting evidence
+   - Include specific examples, data, and backing information
+   - Use engaging, enthusiastic language that matches their energy
+   - Ask follow-up questions to dive deeper into topics
+   - Provide multiple perspectives and detailed explanations
+
+2. **STRESSED_URGENT_CLEAR** (Valence: 0 to -1, Arousal: 0.5 to 1):
+   - User needs URGENT, CLEAR, TO-THE-POINT answers
+   - Keep responses SHORT and DIRECT - no rambling or unnecessary details
+   - Provide immediate, actionable solutions
+   - Use clear, concise language
+   - Focus on practical, urgent help
+   - Avoid lengthy explanations or tangents
+
+3. **BORED_SIMPLE_CLEAR** (Valence: 0 to -1, Arousal: 0 to 0.5):
+   - User needs SIMPLE, CLEAR answers
+   - Use straightforward, easy-to-understand language
+   - Keep responses concise but complete
+   - Avoid complex jargon or lengthy explanations
+   - Make information digestible and engaging
+   - Use simple, direct communication
+
+4. **CALM_ENGAGING_CONVERSATION** (Valence: 0 to 1, Arousal: 0 to 0.5):
+   - User needs ENGAGING, TWO-WAY conversation
+   - Ask thoughtful questions to encourage dialogue
+   - Share personal insights and experiences
+   - Create a conversational, friendly tone
+   - Encourage back-and-forth discussion
+   - Make the interaction feel like a natural conversation
+
+CRITICAL RULES:
+- Your response MUST match the specific strategy for their emotional state
+- Adjust your response length and complexity based on their arousal level
+- Match their energy level (high arousal = energetic, low arousal = calm)
+- Provide the type of answer they're seeking based on their emotional state
+- Use emotional intelligence in every interaction WITHOUT explicitly mentioning their mood
+- Respond naturally and conversationally
 
 AVOID:
-- Being overly clinical or robotic
-- Ignoring emotional context
-- Giving medical advice
-- Being dismissive of their feelings"""
+- Generic responses that ignore emotional context
+- Being emotionally tone-deaf to their state
+- Overwhelming someone who's already distressed
+- Being dismissive of their feelings
+- Providing the wrong type of response for their emotional state
+- Explicitly mentioning their detected mood or emotional state
+- Clinical or analytical language about their emotions"""
             
-            # Create a conversational user prompt
+            # Create emotionally-aware user prompt
             history_context = ""
             if conversation_history:
                 recent_history = conversation_history[-3:]  # Last 3 exchanges
@@ -309,19 +456,27 @@ AVOID:
                     history_context += f"User: {exchange.get('user', '')}\nAssistant: {exchange.get('assistant', '')}\n"
             
             user_prompt = f"""User's message: "{original_text}"
-            
-Their emotional state shows {emotion} with {sentiment} sentiment (confidence: {confidence:.2f}).
+
+EMOTIONAL CONTEXT (MUST INFLUENCE YOUR RESPONSE):
+- Sentiment: {sentiment} (confidence: {confidence:.2f})
+- Emotional intensity: {emotional_intensity}
+- Valence: {valence:.2f} (positive/negative)
+- Arousal: {arousal:.2f} (calm/excited)
 {history_context}
-Respond naturally to their message while being aware of their emotional state. If it's a general question, answer it directly. If it's emotional, provide support. If it's mixed, address both aspects naturally."""
+
+Generate a natural, conversational response that is emotionally appropriate for their current state. Your response should feel like it's coming from someone who truly understands their situation, but DO NOT explicitly mention their mood or emotional state. Respond naturally and helpfully."""
+            
+            # Adjust temperature based on emotional state
+            temperature = self._calculate_response_temperature(emotion_data)
             
             response = self.openai_client.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4.1-nano",
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
                 max_tokens=300,
-                temperature=0.6  # Slightly higher for more natural responses
+                temperature=temperature
             )
             return response.choices[0].message.content.strip()
         except Exception as e:

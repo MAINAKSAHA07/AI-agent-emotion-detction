@@ -1,4 +1,5 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://3.144.160.219:8000';
+// For Netlify deployment, use proxy to avoid mixed content issues
+const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
 export default API_BASE_URL;

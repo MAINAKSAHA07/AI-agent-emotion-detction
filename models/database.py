@@ -22,9 +22,7 @@ USE_DYNAMODB = os.getenv('USE_DYNAMODB', 'false').lower() == 'true'
 if not USE_DYNAMODB:
     engine = create_engine(
         DATABASE_URL,
-        pool_size=5,           # Number of connections to maintain in pool
-        max_overflow=10,        # Additional connections beyond pool_size
-        pool_timeout=30,        # Seconds to wait for connection from pool
+        # Removed pool_size, max_overflow, pool_timeout for SQLite compatibility
         pool_recycle=3600,      # Recycle connections after 1 hour
         pool_pre_ping=True     # Validate connections before use
     )
