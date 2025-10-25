@@ -16,7 +16,7 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
         {
           id: 'welcome',
           type: 'agent',
-          content: "Hello! I'm your emotional intelligence agent. I'm here to help you understand and process your emotions. Share what's on your mind, and I'll analyze your emotional state using advanced AI.",
+          content: "Hello! I'm your emotional intelligence agent.",
           timestamp: new Date(),
           emotion: null
         }
@@ -117,7 +117,7 @@ const EmotionAgent = ({ onAnalyze, loading, error, sessionId }) => {
       {
         id: 'welcome',
         type: 'agent',
-        content: "Hello! I'm your emotional intelligence agent. I'm here to help you understand and process your emotions. Share what's on your mind, and I'll analyze your emotional state using advanced AI.",
+        content: "Hello! I'm your emotional intelligence agent.",
         timestamp: new Date(),
         emotion: null
       }

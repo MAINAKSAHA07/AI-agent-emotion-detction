@@ -25,12 +25,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware
+# Add CORS middleware with proper security configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure this properly for production
+    allow_origins=[
+        "http://localhost:3000",  # Development frontend
+        "http://localhost:3001",  # Alternative dev port
+        "https://aiemotion.netlify.app",  # Production frontend
+        "https://*.netlify.app",  # Netlify preview deployments
+        "http://3.144.160.219",  # EC2 server
+        "http://3.144.160.219:80",  # EC2 server with port
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -79,43 +86,60 @@ async def analyze_emotion(request: Request):
     - conversation_history: array (optional) - Previous conversation context
     """
     try:
-        data = await request.json()
+        # Parse request data with error handling
+        try:
+            data = await request.json()
+        except Exception as e:
+            raise HTTPException(status_code=400, detail="Invalid JSON in request body")
+        
         text = data.get("text", "").strip()
         session_id = data.get("session_id")
         context = data.get("context")
         conversation_history = data.get("conversation_history", [])
         
+        # Validate input
         if not text:
             raise HTTPException(status_code=400, detail="Text input is required")
+        
+        if len(text) > 5000:  # Reasonable limit for text input
+            raise HTTPException(status_code=400, detail="Text input too long (max 5000 characters)")
         
         # Generate session ID if not provided
         if not session_id:
             session_id = str(uuid.uuid4())
         
         # Process text through State Agent with conversation history
-        result = state_agent.process_text(text, session_id, context, conversation_history)
+        try:
+            result = state_agent.process_text(text, session_id, context, conversation_history)
+        except Exception as e:
+            logger.error(f"State Agent processing error: {str(e)}")
+            raise HTTPException(status_code=500, detail="Error processing emotion analysis")
         
         if "error" in result:
             raise HTTPException(status_code=400, detail=result["error"])
         
-        # Store analysis in database using unified service
-        analysis_id = db_service.save_emotion_analysis(result)
-        
-        # Update session
-        db_service.update_session(session_id, 1)  # Increment by 1
+        # Store analysis in database with error handling
+        try:
+            analysis_id = db_service.save_emotion_analysis(result)
+            db_service.update_session(session_id, 1)  # Increment by 1
+        except Exception as e:
+            logger.error(f"Database save error: {str(e)}")
+            # Continue without failing - analysis still works
+            analysis_id = None
         
         # Return analysis result
         return {
             "success": True,
             "analysis": result,
-            "session_id": session_id
+            "session_id": session_id,
+            "analysis_id": analysis_id
         }
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error in analyze_emotion: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        logger.error(f"Unexpected error in analyze_emotion: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/history/{session_id}")

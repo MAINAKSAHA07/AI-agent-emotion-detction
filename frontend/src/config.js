@@ -2,4 +2,5 @@
 // For Netlify deployment, use proxy to avoid mixed content issues
 const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
+// Ensure we're using the proxy endpoints for all API calls
 export default API_BASE_URL;

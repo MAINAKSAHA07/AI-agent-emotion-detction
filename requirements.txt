@@ -6,4 +6,4 @@ python-multipart==0.0.6
 sqlalchemy==1.4.53
 python-dotenv==1.0.0
 requests==2.31.0
-openai==0.28.1
+openai>=1.0.0

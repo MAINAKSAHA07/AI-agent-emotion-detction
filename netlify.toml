@@ -12,7 +12,43 @@
   to = "http://3.144.160.219:8000/:splat"
   status = 200
   force = true
-  headers = {X-From = "Netlify"}
+  headers = {X-From = "Netlify", X-Forwarded-Proto = "https"}
+
+# Specific API endpoints for the emotion detection app
+[[redirects]]
+  from = "/analyze"
+  to = "http://3.144.160.219:8000/analyze"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify", X-Forwarded-Proto = "https"}
+
+[[redirects]]
+  from = "/health"
+  to = "http://3.144.160.219:8000/health"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify", X-Forwarded-Proto = "https"}
+
+[[redirects]]
+  from = "/history/*"
+  to = "http://3.144.160.219:8000/history/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify", X-Forwarded-Proto = "https"}
+
+[[redirects]]
+  from = "/trends/*"
+  to = "http://3.144.160.219:8000/trends/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify", X-Forwarded-Proto = "https"}
+
+[[redirects]]
+  from = "/sessions"
+  to = "http://3.144.160.219:8000/sessions"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify", X-Forwarded-Proto = "https"}
 
 # Catch-all for React Router
 [[redirects]]

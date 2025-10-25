@@ -1,0 +1,123 @@
+{
+  "export_info": {
+    "export_timestamp": "2025-10-22T14:38:28.604637",
+    "export_type": "Recent Chats Summary from AWS",
+    "description": "Summary of recent chat conversations from AWS deployment",
+    "total_sessions": 10,
+    "sessions_with_data": 5
+  },
+  "recent_activity": [
+    {
+      "session_id": "session_mh3mp3bt0",
+      "created_at": "2025-10-17T22:35:53.158644",
+      "last_activity": "2025-10-22T05:46:59.588137",
+      "total_analyses": 1,
+      "recent_conversations": [
+        {
+          "timestamp": "2025-10-22T05:46:59.580160",
+          "user_input": "very helpful :",
+          "ai_response": "I'm glad to hear you found the information helpful! When it comes to finding the best route to Seattle quickly, using GPS navigation apps like Google Maps or Waze can be incredibly useful. These apps can give you real-time updates on traffic conditions, suggest alternative routes, and estimate travel times to help you reach your destination efficiently. Have a safe and smooth journey to Seattle! If you have any more questions or need further assistance, feel free to ask.",
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "confidence": 1.0
+        },
+        {
+          "timestamp": "2025-10-22T05:46:20.858354",
+          "user_input": "this is not very helpful. I still don't know how to get there, which route?",
+          "ai_response": "I understand your urgency in needing to find the best route to get to Seattle quickly. To help you navigate efficiently, consider using GPS navigation apps like Google Maps or Waze to find the fastest route based on real-time traffic conditions. These apps can provide you with turn-by-turn directions, alternative routes, and estimated travel times to ensure you reach your destination as soon as possible. Safe travels on your journey!",
+          "sentiment": "NEGATIVE",
+          "emotion": "Sadness / Anger / Fear / Frustration",
+          "confidence": 1.0
+        },
+        {
+          "timestamp": "2025-10-22T05:45:10.234649",
+          "user_input": "do I sound like I need to enjoy nature?",
+          "ai_response": "It seems like you have a sense of urgency to get to Seattle quickly, but perhaps a quick stop to enjoy some nature along your journey could be a refreshing break. Even a short moment in nature can help recharge your energy for the road ahead. If time allows, nature can be a wonderful way to relax and rejuvenate before continuing your journey. Safe travels, and remember to take care of yourself along the way!",
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "confidence": 0.76
+        }
+      ]
+    },
+    {
+      "session_id": "session_8qz8lrdlp",
+      "created_at": "2025-10-22T03:44:24.653096",
+      "last_activity": "2025-10-22T03:49:59.781088",
+      "total_analyses": 1,
+      "recent_conversations": [
+        {
+          "timestamp": "2025-10-22T03:49:59.770489",
+          "user_input": "i want to understand in the field of work i.e eng",
+          "ai_response": "That's great to hear that you're interested in understanding more about the field of work, especially in engineering! The field of engineering is vast and offers a wide range of opportunities to explore and grow. From mechanical to electrical, civil to software engineering, each specialization brings its own set of challenges and innovations. \n\nIf you're looking to dive deeper, you might consider exploring the latest advancements in your specific area of interest, connecting with professionals in the field for insights, or even taking on projects that allow you to apply your knowledge in practical ways. Understanding the trends, technologies, and best practices in engineering can help you stay ahead and make meaningful contributions to the industry.\n\nFeel free to share more about your specific interests or any particular aspects of engineering that you'd like to explore further. I'm here to provide you with detailed insights and information to support your journey in the exciting world of engineering!",
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "confidence": 1.0
+        },
+        {
+          "timestamp": "2025-10-22T03:49:22.021390",
+          "user_input": "i am looking for some real world challenges!",
+          "ai_response": "That's fantastic to hear that you're looking for real-world challenges! It's always exciting to tackle new opportunities and push yourself further. What specific type of challenges are you interested in? Whether it's related to work, hobbies, or personal growth, I'm here to help you find some engaging and rewarding challenges to take on. Let's dive into this together!",
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "confidence": 1.0
+        },
+        {
+          "timestamp": "2025-10-22T03:44:41.053642",
+          "user_input": "how are you doing?",
+          "ai_response": "I'm here and ready to assist you. What can I help you with today?",
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference / Contemplative",
+          "confidence": 0.98
+        }
+      ]
+    },
+    {
+      "session_id": "quick_test",
+      "created_at": "2025-10-22T03:28:45.223109",
+      "last_activity": "2025-10-22T03:28:45.223117",
+      "total_analyses": 1,
+      "recent_conversations": [
+        {
+          "timestamp": "2025-10-22T03:28:45.214591",
+          "user_input": "Hello",
+          "ai_response": "Hello! How can I assist you today? Feel free to ask any questions or share what's on your mind.",
+          "sentiment": "NEUTRAL",
+          "emotion": "Calm / Indifference / Contemplative",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "session_id": "test_frontend",
+      "created_at": "2025-10-22T03:28:33.640989",
+      "last_activity": "2025-10-22T03:28:33.640996",
+      "total_analyses": 1,
+      "recent_conversations": [
+        {
+          "timestamp": "2025-10-22T03:28:33.632036",
+          "user_input": "I am feeling happy today!",
+          "ai_response": "That's fantastic to hear that you're feeling happy today! It's always wonderful to have those moments of pure joy and positivity. Is there anything specific that's contributing to your happiness today, or is it just an all-around great day? I'm here to chat and share in your happiness!",
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "confidence": 1.0
+        }
+      ]
+    },
+    {
+      "session_id": "test",
+      "created_at": "2025-10-22T03:27:35.810314",
+      "last_activity": "2025-10-22T03:27:35.810321",
+      "total_analyses": 1,
+      "recent_conversations": [
+        {
+          "timestamp": "2025-10-22T03:27:35.801176",
+          "user_input": "I am happy!",
+          "ai_response": "That's fantastic to hear that you're feeling happy! It's wonderful to embrace those moments of joy and positivity. Is there anything specific that's contributing to your happiness today, or is it just an all-around great day for you? Feel free to share more about what's making you smile!",
+          "sentiment": "POSITIVE",
+          "emotion": "Joy / Optimism / Excitement",
+          "confidence": 1.0
+        }
+      ]
+    }
+  ]
+}
