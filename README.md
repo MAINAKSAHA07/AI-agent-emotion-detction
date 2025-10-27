@@ -99,27 +99,6 @@ git clone https://github.com/MAINAKSAHA07/AI-agent-emotion-detction.git
 cd AI-agent-emotion-detction
 ```
 
-### 2. Environment Configuration
-
-Create a `.env` file in the root directory:
-
-```env
-# AWS Configuration
-AWS_ACCESS_KEY_ID=your_aws_access_key
-AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-AWS_DEFAULT_REGION=us-east-1
-
-# Database Configuration (choose one)
-# Development (SQLite)
-DATABASE_URL=sqlite:///./emotion_detection.db
-
-# Production (PostgreSQL)
-# DATABASE_URL=postgresql://username:password@your-rds-endpoint:5432/emotion_detection
-
-# Serverless (DynamoDB)
-# USE_DYNAMODB=true
-```
-
 ### 3. Backend Setup
 
 ```bash
@@ -228,16 +207,6 @@ curl "https://aiemotion.netlify.app/api/trends/session_123"
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 - **Accessibility**: Clear visual indicators and user-friendly navigation
 
-## 🗄️ Data Architecture
-
-### Database Support
-
-| Database Type        | Use Case              | Features                                      |
-| -------------------- | --------------------- | --------------------------------------------- |
-| **SQLite**     | Development & Testing | Local storage, easy setup                     |
-| **PostgreSQL** | Production            | ACID compliance, complex queries, scalability |
-| **DynamoDB**   | Serverless            | NoSQL, auto-scaling, AWS integration          |
-
 ### Data Models
 
 #### Emotion Analysis
@@ -252,40 +221,6 @@ curl "https://aiemotion.netlify.app/api/trends/session_123"
 - **User Sessions**: Persistent session tracking with metadata
 - **Activity Monitoring**: Last activity timestamps and usage patterns
 - **Analytics**: Total analyses, emotional trends, session insights
-
-## 🔧 Configuration & Security
-
-### AWS Permissions
-
-The application requires specific AWS permissions for AI processing:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "comprehend:DetectSentiment",
-                "comprehend:DetectDominantLanguage"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-### Environment Configuration
-
-| Variable                  | Description                | Required | Default                          |
-| ------------------------- | -------------------------- | -------- | -------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | AWS access credentials     | Yes      | -                                |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret credentials     | Yes      | -                                |
-| `AWS_DEFAULT_REGION`    | AWS service region         | No       | us-east-1                        |
-| `DATABASE_URL`          | Database connection string | No       | sqlite:///./emotion_detection.db |
-| `USE_DYNAMODB`          | Enable DynamoDB mode       | No       | false                            |
-
-## 🚀 Deployment Strategies
 
 ### Production Deployment (Current)
 
